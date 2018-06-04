@@ -26,12 +26,16 @@ const insert = (node, value, parent = 0) => {
     const newNode = new Uint32Array([0, 0, 0]);
     newNode[TREE_PARENT] = parent;
     newNode[TREE_NEXT] = tree.map.size + 2;
-    for (let i = 0; i < node.length; i += 3) {
-      if (node[i] === newNode[TREE_PARENT]) {
-        newNode[TREE_FIRST] = node[i + 2];
-        break;
+
+    if (node[node.length - 3] === newNode[TREE_PARENT])
+      for (let i = 0; i < node.length; i += 3) {
+        if (node[i] === newNode[TREE_PARENT]) {
+          newNode[TREE_FIRST] = node[i + 2];
+          break;
+        }
       }
-    }
+    else
+      newNode[TREE_FIRST] = tree.map.size + 1;
 
     tree.map.set(tree.map.size + 1, value);
     return tree.concat(node, newNode);
@@ -46,7 +50,7 @@ const get = (id) =>
 const searchByObj = (value) => {
   if (typeof value === 'object' && !Array.isArray(value)) {
     const string = JSON.stringify(value);
-    for (let key of tree.map)
+    for (const key of tree.map)
       if (JSON.stringify(key[1]) === string)
         return key[0];
   }
@@ -60,17 +64,17 @@ root = tree.insert(root, { name: 'n1' });
 root = tree.insert(root, { name: 'n2' });
 root = tree.insert(root, { name: 'n3' });
 
-root = tree.insert(root, { name: 'n11' }, 1);
-root = tree.insert(root, { name: 'n12' }, 1);
-root = tree.insert(root, { name: 'n13' }, 1);
+root = tree.insert(root, { name: 'n11' }, tree.searchByObj({ name: 'n1' }));
+root = tree.insert(root, { name: 'n12' }, tree.searchByObj({ name: 'n1' }));
+root = tree.insert(root, { name: 'n13' }, tree.searchByObj({ name: 'n1' }));
 
-root = tree.insert(root, { name: 'n21' }, 2);
-root = tree.insert(root, { name: 'n22' }, 2);
-root = tree.insert(root, { name: 'n23' }, 2);
+root = tree.insert(root, { name: 'n21' }, tree.searchByObj({ name: 'n2' }));
+root = tree.insert(root, { name: 'n22' }, tree.searchByObj({ name: 'n2' }));
+root = tree.insert(root, { name: 'n23' }, tree.searchByObj({ name: 'n2' }));
 
-root = tree.insert(root, { name: 'n31' }, 3);
-root = tree.insert(root, { name: 'n32' }, 3);
-root = tree.insert(root, { name: 'n33' }, 3);
+root = tree.insert(root, { name: 'n31' }, tree.searchByObj({ name: 'n3' }));
+root = tree.insert(root, { name: 'n32' }, tree.searchByObj({ name: 'n3' }));
+root = tree.insert(root, { name: 'n33' }, tree.searchByObj({ name: 'n3' }));
 
 console.log('Tree: ');
 console.dir({ root });
